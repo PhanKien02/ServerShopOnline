@@ -1,9 +1,9 @@
 package com.BackendShop.repositoty;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface DistrictRepository extends JpaRepository<DistrictRepository,Long> {
+import com.BackendShop.domain.District;
+
+public interface DistrictRepository extends JpaRepository<District,Long> {
     
 }
