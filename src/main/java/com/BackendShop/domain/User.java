@@ -12,14 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -59,18 +55,25 @@ public class User extends AbstractAuditingEntity{
 	@Size(max = 50)
 	private String name;
 	
-	@Column(name = "phone", length = 10)
+	@Column(name = "phone", length = 10, unique = true)
 	@Size(min = 10,max = 10)
 	private String phone;
 	
 	@Column(name = "email",length = 255, unique = true)
 	@Size(max = 255)
+	@NotNull
 	private String email;
 	
-	@Column(name = "sex", length = 10)
+	@Column(name = "gender", length = 10)
 	@Size(max = 10)
-	private String sex;
+	private String gender;
 	
+	@Column(name = "age")
+	private int age;
+
+	@Column(name = "avatar", length=244)
+	private String avatar;
+
 	@Column(name = "activeKey" , length = 20)
 	@Size(max=20)
 	@JsonIgnore
