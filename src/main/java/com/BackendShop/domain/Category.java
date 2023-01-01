@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +33,7 @@ public class Category {
 	private	String name;
 	
 	@OneToMany(mappedBy = "category")
+	@JsonIgnore
 	private Collection<Product> products;
 	
 }

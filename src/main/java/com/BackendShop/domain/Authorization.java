@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 public class Authorization {
 
 	@Id
+	@NotNull
 	@Size(max = 50)
 	@Column(name = "authori")
 	private String authori;
@@ -33,5 +34,4 @@ public class Authorization {
 	@Column(name = "description", length = 50)
 	@Size(max=50)
 	private String description;
-	 
 }

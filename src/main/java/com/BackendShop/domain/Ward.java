@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +31,7 @@ public class Ward {
 	@Column(name = "name")
 	private String name;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "district_id")
 	private District district;
