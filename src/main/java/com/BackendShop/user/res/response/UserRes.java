@@ -19,7 +19,7 @@ public class UserRes {
 
     private String fullname;
     
-    private String sex;
+    private String gender;
    
     private boolean activated;
 

@@ -1,42 +1,26 @@
 package com.BackendShop.exception;
 
-import javax.print.attribute.standard.Severity;
-
-import com.BackendShop.message.Message;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class BaseException extends RuntimeException {
 
-    private Message msg;
-    private Severity severity;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2580130121502117304L;
 
-    @JsonIgnore
-    private Throwable rootcase;
+	public BaseException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-    public BaseException(Message message, Severity severity, Throwable rootcase) {
-        super(message.getContent(), rootcase);
-        this.msg = message;
-        this.severity = severity;
-        this.rootcase = rootcase;
-    }
+	public BaseException(String message, Throwable cause) {
+		super(message, cause);
+		
+	}
 
-    public BaseException(String string, String code, Object[] args, Object object) {
-    }
-
-    public Message getMsg() {
-        return msg;
-    }
-
-    public void setMsg(Message msg) {
-        this.msg = msg;
-    }
-
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
-    }
-
+	public BaseException(String message) {
+		super(message);
+		
+	}
+	
+  
 }

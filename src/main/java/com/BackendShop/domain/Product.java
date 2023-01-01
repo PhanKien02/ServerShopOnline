@@ -1,18 +1,23 @@
 package com.BackendShop.domain;
 
-import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.BackendShop.domain.enumeration.Color;
+import com.BackendShop.domain.enumeration.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,23 +52,17 @@ public class Product  extends AbstractAuditingEntity{
 	
 	@Column(name = "description")
 	private String description;
-		
-	private int amount;
-	@ManyToMany
-	@JoinTable(
-			name ="color_product",
-			joinColumns= {@JoinColumn(name="color_id",referencedColumnName = "id")},
-			inverseJoinColumns= {@JoinColumn(name = "product_id",referencedColumnName = "id")}		
-			)
-	private Collection<Color> colors ;
 	
-	@ManyToMany
-	@JoinTable(
-			name = "size_product",
-			joinColumns = {@JoinColumn(name="size_id", referencedColumnName = "id")},
-			inverseJoinColumns = {@JoinColumn(name="product_id",referencedColumnName = "id")}
-			)	
-	private Collection<Size> sizes ;
+	@Column(name="amount")
+	private int amount;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="color")
+	private Color color ;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="size")
+	private Size size ;
 	
 	@ManyToOne
 	@JoinColumn(name = "trademark_id")
@@ -74,11 +73,12 @@ public class Product  extends AbstractAuditingEntity{
 	private Category category;
 	
 	@OneToMany(mappedBy = "product")
-	private Collection<CartItem> cartItems;
+	private Set<CartItem> cartItems;
 	
 	@OneToMany(mappedBy = "comment")
-	private Collection<Comment> comments;
+	private Set<Comment> comments;
 	
 	@OneToMany(mappedBy = "product")
-	private Collection<OrderDetail> orderItems;
+	private Set<OrderDetail> orderItems;
+	
 }
