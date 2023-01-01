@@ -105,8 +105,10 @@ public class User extends AbstractAuditingEntity{
 	private Set<CartItem> cartItems = new HashSet<>();
 	
 	@OneToMany(mappedBy = "users")
+	@JsonIgnore
 	private Collection<Comment> comments;
 	
 	@OneToMany(mappedBy = "user")
+	@JsonIgnore
 	private Collection<Order> orders;
 }

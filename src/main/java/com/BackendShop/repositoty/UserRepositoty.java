@@ -20,6 +20,8 @@ public interface UserRepositoty extends JpaRepository<User, Long> {
 
     Optional<User> findOneByEmail(String email);
     
+    Optional<User> findOneByUserName(String userName);
+    
     @EntityGraph(attributePaths = "authorization")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
     Optional<User> findOneWithAuthoritiesByEmail(String email);

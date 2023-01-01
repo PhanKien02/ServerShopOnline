@@ -1,5 +1,6 @@
 package com.BackendShop.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,8 +20,8 @@ import com.BackendShop.domain.Authorization;
 import com.BackendShop.domain.User;
 import com.BackendShop.domain.enumeration.RoleUser;
 import com.BackendShop.exception.AlreadyUserException;
-import com.BackendShop.message.Message;
-import com.BackendShop.message.MessageHelper;
+import com.BackendShop.exception.AuthenticationException;
+import com.BackendShop.exception.BaseException;
 import com.BackendShop.repositoty.AuthoriRepository;
 import com.BackendShop.repositoty.UserRepositoty;
 import com.BackendShop.security.AuthoritiesConstants;
@@ -64,7 +65,7 @@ public class UserService {
         userRepositoty.findOneByPhone(signUpRq.getPhone()).ifPresent(
             existUser -> {
                 if(!removeUserNotActive(existUser)){
-                    throw new AlreadyUserException(MessageHelper.getMessage(Message.Keys.M0002), new Throwable());
+                    throw new BaseException("Số điện thoại đã được sử dụng",new Throwable());
                 }
             }
         );
@@ -72,11 +73,20 @@ public class UserService {
             existUser->{
                 if(!removeUserNotActive(existUser))
                 {
-                    throw new AlreadyUserException(MessageHelper.getMessage     (Message.Keys.M0003), new Throwable());
+                    throw new AlreadyUserException("Email đã được sử dụng",new Throwable());
                 }
             }
             
         );
+        userRepositoty.findOneByUserName(signUpRq.getUsername()).ifPresent(
+                existUser->{
+                    if(!removeUserNotActive(existUser))
+                    {
+                        throw new AlreadyUserException("userName đã được sử dụng",new Throwable());
+                    }
+                }
+                
+            );
         
     String encryptedPassword=  passwordEncoder.encode(signUpRq.getPassword());
 
@@ -109,7 +119,7 @@ public class UserService {
 
         UserRes userRes = UserRes.builder()
                 .fullname(user.getName())
-                .sex(user.getGender())
+                .gender(user.getGender())
                 .age(user.getAge())
                 .activated(user.isActive())
                 .avatar(user.getAvatar())
@@ -148,17 +158,17 @@ public class UserService {
         try {
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         } catch (Exception e) {
-            // throw new AuthenticationException(MessageHelper.getMessage(Message.Keys.M0001), new Throwable());
+                throw new AuthenticationException("Username or password is invalid", new Throwable());
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwtToken = tokenProvider.createToken(authentication);
+        // String jwtToken = tokenProvider.createToken(authentication);
 
         User user = userRepositoty.findOneWithAuthoritiesByEmail(authentication.getName()).get();
 
         UserRes userRes = UserRes
                 .builder()
                 .fullname(user.getName())
-                .sex(user.getGender())
+                .gender(user.getGender())
                 .age(user.getAge())
                 .activated(user.isActive())
                 .avatar(user.getAvatar())
@@ -167,11 +177,30 @@ public class UserService {
                 .build();
 
         SignInRes signInRes = SignInRes.builder()
-                .tokenString(jwtToken)
+                // .tokenString(jwtToken)
                 .user(userRes)
                 .build();
 
         return signInRes;
     }
+    public List<UserRes> getAllUser(){
 
+        List<User> users = userRepositoty.findAll();
+        List<UserRes> userResList = new ArrayList<>();
+
+        for(User user: users){
+            UserRes userRes = UserRes.builder()
+            .id(user.getId())
+            .fullname(user.getName())
+            .age(user.getAge())
+            .email(user.getEmail())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .role(user.getAuthorization())
+            .avatar(user.getAvatar())
+            .build();
+            userResList.add(userRes);
+        }
+        return userResList;
+    }
 }
