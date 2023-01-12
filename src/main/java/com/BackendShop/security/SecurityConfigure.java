@@ -1,7 +1,7 @@
 package com.BackendShop.security;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -14,9 +14,8 @@ import com.BackendShop.security.jwt.JWTConfigurer;
 import com.BackendShop.security.jwt.TokenProvider;
 
 @EnableWebSecurity
-@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfigure {
-
 
     TokenProvider tokenProvider;
 
@@ -41,7 +40,10 @@ public class SecurityConfigure {
             .authorizeRequests()
             .antMatchers("/api/auth/sign-up").permitAll()
             .antMatchers("/api/auth/sign-in").permitAll()
-            .antMatchers("/api/**").permitAll()
+            .antMatchers("/api/**").hasAnyAuthority(AuthoritiesConstants.USER)
+            .and()
+            .logout() // Cho phép logout
+            .logoutUrl("/logout") // url logout
             .and()
             .httpBasic()
             .and()
