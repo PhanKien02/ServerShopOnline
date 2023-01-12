@@ -44,7 +44,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     private TokenProvider tokenProvider;
 
     @Autowired
@@ -53,14 +52,13 @@ public class UserService {
     @Autowired
     private UserRepositoty userRepositoty;
 
-  
-    public UserService(TokenProvider tokenProvider, AuthoriRepository authoriRepository) {
-		super();
-		this.tokenProvider = tokenProvider;
-		this.authoriRepository = authoriRepository;
-	}
- // *Sign up
-	public SignUpRes signUp(SignUpRq signUpRq) {
+    UserService(AuthoriRepository authoriRepository) {
+        this.authoriRepository = authoriRepository;
+    }
+
+   // *Sign up
+
+    public SignUpRes signUp(SignUpRq signUpRq) {
         
         signUpRq.setPhone(signUpRq.getPhone().replaceAll(" ",""));
 
@@ -151,6 +149,7 @@ public class UserService {
     public SignInRes signIn(SignInReq signReq) {
 
         log.debug("request to login userservice");
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 signReq.getEmail(),
                 signReq.getPassword());
@@ -162,8 +161,7 @@ public class UserService {
                 throw new AuthenticationException("Username or password is invalid", new Throwable());
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        String jwtToken = tokenProvider.createToken(authentication, signReq.getRememberMe());
+        // String jwtToken = tokenProvider.createToken(authentication);
 
         User user = userRepositoty.findOneWithAuthoritiesByEmail(authentication.getName()).get();
 
@@ -176,11 +174,10 @@ public class UserService {
                 .avatar(user.getAvatar())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .role(user.getAuthorization())
                 .build();
 
         SignInRes signInRes = SignInRes.builder()
-                 .token(jwtToken)
+                // .tokenString(jwtToken)
                 .user(userRes)
                 .build();
 

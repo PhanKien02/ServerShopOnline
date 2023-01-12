@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class SignInRes {
     
-    private String token;
+    private String tokenString;
 
     private UserRes user;
 }
