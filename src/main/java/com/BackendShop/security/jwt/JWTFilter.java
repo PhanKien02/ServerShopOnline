@@ -18,12 +18,36 @@ import org.springframework.web.filter.GenericFilterBean;
 public class JWTFilter extends GenericFilterBean {
     private static final Logger log = LoggerFactory.getLogger(JWTFilter.class);
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    private TokenProvider tokenProvider;
+
+    public JWTFilter(TokenProvider tokenProvider) {
+       this.tokenProvider = tokenProvider;
+    }
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
 			throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		
+		 HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+	      String jwt = resolveToken(httpServletRequest);
+	      String requestURI = httpServletRequest.getRequestURI();
+
+	      if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+	         Authentication authentication = tokenProvider.getAuthentication(jwt);
+	         SecurityContextHolder.getContext().setAuthentication(authentication);
+	         log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestURI);
+	      } else {
+	    	  log.debug("no valid JWT token found, uri: {}", requestURI);
+	      }
+
+	      filterChain.doFilter(servletRequest, servletResponse);
 	}
 
-   
+	 private String resolveToken(HttpServletRequest request) {
+	      String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+	      if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+	         return bearerToken.substring(7);
+	      }
+	      return null;
+	   }
 }
