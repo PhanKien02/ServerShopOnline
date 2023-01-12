@@ -22,6 +22,4 @@ public class SignInReq {
     @NotBlank
     private String password;
 
-    
-    Boolean rememberMe = false;
 }

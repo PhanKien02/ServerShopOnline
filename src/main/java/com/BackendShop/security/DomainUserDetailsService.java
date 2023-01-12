@@ -12,12 +12,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 
 import com.BackendShop.domain.User;
 import com.BackendShop.repositoty.UserRepositoty;
 
-@Component("userDetailsService")
 public class DomainUserDetailsService implements UserDetailsService {
     private final Logger log = LoggerFactory.getLogger(DomainUserDetailsService.class);
 
@@ -44,8 +42,7 @@ public class DomainUserDetailsService implements UserDetailsService {
             .map(user -> createSpringSecurityUser(lowercaseLogin, user))
             .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
     }
-    private org.springframework.security.core.userdetails.User
-    createSpringSecurityUser(String lowercaseLogin, User user) {
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
         if (!user.isActive()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
@@ -54,6 +51,6 @@ public class DomainUserDetailsService implements UserDetailsService {
             .stream()
             .map(authority -> new SimpleGrantedAuthority(authority.getAuthori()))
             .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), grantedAuthorities);
     }
 }
